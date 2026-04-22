@@ -1,62 +1,47 @@
 import random
 
+def guess_number_game():
+    print("--- ИГРА: УГАДАЙ ЧИСЛО ---")
+    print("Инструкция: Я загадал число от 1 до 100. У вас есть 10 попыток.")
 
-def start_game():
-    print("ИГРА 'УГАДАЙ ЧИСЛО' ")
-    print("Инструкция: Компьютер загадал число. Ваша задача — угадать его за ограниченное число попыток.")
-
-    # Настройки (Адаптивность)
-    low, high = 1, 100
-    max_attempts = 10
-    secret_number = random.randint(low, high)
-    attempts_left = max_attempts
-
-    print(f"Я загадал число от {low} до {high}. У вас есть {max_attempts} попыток.")
+    secret_number = random.randint(1, 100)
+    attempts_left = 10
 
     while attempts_left > 0:
-        print(f"\nОсталось попыток: {attempts_left}")
-        user_input = input("Введите ваше число (или 'exit' для выхода): ").strip().lower()
-
-        if user_input == 'exit':
-            print("Игра завершена.")
-            break
-
-        # Валидация ввода
         try:
+            print(f"\nОсталось попыток: {attempts_left}")
+            user_input = input("Введите ваше число (или 'exit' для выхода): ")
+            
+            if user_input.lower() == 'exit':
+                print("Игра прервана.")
+                return
+
             guess = int(user_input)
-            if not (low <= guess <= high):
-                print(f"Пожалуйста, введите число именно в диапазоне от {low} до {high}.")
+
+            if not (1 <= guess <= 100):
+                print("Ошибка: Число должно быть от 1 до 100.")
                 continue
+
+            attempts_left -= 1
+
+            if guess == secret_number:
+                print(f"Поздравляю! Вы угадали число {secret_number}!")
+                return
+            elif guess < secret_number:
+                print("Слишком маленькое.")
+            else:
+                print("Слишком большое.")
+
+            # Подсказка, когда осталось мало попыток
+            if attempts_left == 3:
+                low_hint = max(1, secret_number - 15)
+                high_hint = min(100, secret_number + 15)
+                print(f"--- ПОДСКАЗКА: Число находится в диапазоне от {low_hint} до {high_hint} ---")
+
         except ValueError:
-            print("Ошибка: введите целое число.")
-            continue
+            print("Ошибка: Введите целое число.")
 
-        attempts_left -= 1
-
-        # Проверка и обратная связь
-        if guess == secret_number:
-            print(f"🎉 ПОЗДРАВЛЯЮ! Вы угадали число {secret_number}!")
-            break
-        elif guess < secret_number:
-            print("Слишком маленькое.")
-        else:
-            print("Слишком большое.")
-
-        # Подсказка (Игровая логика)
-        if attempts_left == 3:
-            print(
-                f"--- ПОДСКАЗКА: Число находится в диапазоне от {max(low, secret_number - 10)} до {min(high, secret_number + 10)} ---")
-
-    if attempts_left == 0 and guess != secret_number:
-        print(f"\nВы проиграли! Максимальное количество попыток исчерпано. Было загадано: {secret_number}")
-
-    # Повторная игра
-    play_again = input("\nХотите сыграть еще раз? (y/n): ").lower()
-    if play_again == 'y':
-        start_game()
-    else:
-        print("Спасибо за игру! До свидания.")
-
+    print(f"\nВы проиграли! Попытки закончились. Было загадано: {secret_number}")
 
 if __name__ == "__main__":
-    start_game()
+    guess_number_game()
